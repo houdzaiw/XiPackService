@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -274,7 +274,7 @@ def get_order_status(order_no: str):
 
 # 用于测试的模拟支付端点
 @app.post("/api/payment/simulate")
-def simulate_payment(order_no: str):
+def simulate_payment(order_no: str = Query(..., description="订单号")):
     """模拟支付成功（仅用于测试）"""
     db: Session = SessionLocal()
     
