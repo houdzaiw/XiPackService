@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购买 XiPack 激活码</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header .price {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .header .price-unit {
+            font-size: 24px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .payment-method img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .payment-method .name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .qr-code-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qr-code {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+        }
+
+        .qr-code img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .qr-placeholder {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+
+        .license-key {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            word-break: break-all;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #f44336;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 14px;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 XiPack 激活码</h1>
+            <div class="price">¥<span class="price-amount">99</span><span class="price-unit"></span></div>
+            <p>终身使用 · 单设备授权</p>
+        </div>
+
+        <div class="content">
+            <!-- 步骤1: 填写信息 -->
+            <div class="step active" id="step1">
+                <div class="error" id="error-message"></div>
+                
+                <div class="form-group">
+                    <label>设备 ID *</label>
+                    <input type="text" id="device_id" placeholder="从 XiPack 应用中获取" required>
+                </div>
+
+                <div class="form-group">
+                    <label>邮箱地址 *</label>
+                    <input type="email" id="email" placeholder="用于接收激活码" required>
+                </div>
+
+                <div class="form-group">
+                    <label>选择支付方式</label>
+                    <div class="payment-methods">
+                        <div class="payment-method" data-method="alipay" onclick="selectPayment('alipay')">
+                            <div style="font-size: 48px;">💳</div>
+                            <div class="name">支付宝</div>
+                        </div>
+                        <div class="payment-method" data-method="wechat" onclick="selectPayment('wechat')">
+                            <div style="font-size: 48px;">💚</div>
+                            <div class="name">微信支付</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="createOrder()" id="create-order-btn">
+                    立即购买
+                </button>
+
+                <p class="info-text">
+                    💡 提示：请从 XiPack 应用中复制设备 ID。支付成功后，激活码将自动发送到您的邮箱。
+                </p>
+            </div>
+
+            <!-- 步骤2: 扫码支付 -->
+            <div class="step" id="step2">
+                <div class="qr-code-container">
+                    <h3>请使用<span id="payment-name">支付宝</span>扫码支付</h3>
+                    <div class="qr-code" id="qr-container">
+                        <div class="qr-placeholder">
+                            <div class="loading"></div>
+                            <p>生成二维码中...</p>
+                        </div>
+                    </div>
+                    <p class="info-text">
+                        支付金额：¥<span id="payment-amount">99</span><br>
+                        订单号：<span id="order-no"></span>
+                    </p>
+                    <p class="info-text" style="color: #667eea;">
+                        等待支付中...
+                    </p>
+                </div>
+
+                <!-- 测试用按钮 -->
+                <button class="btn" onclick="simulatePayment()" style="margin-top: 20px; background: #ff9800;">
+                    🧪 模拟支付成功（测试用）
+                </button>
+            </div>
+
+            <!-- 步骤3: 支付成功 -->
+            <div class="step" id="step3">
+                <div class="success-container">
+                    <div class="success-icon">✓</div>
+                    <h2>支付成功！</h2>
+                    <p style="color: #666; margin: 15px 0;">激活码已发送到您的邮箱</p>
+                    
+                    <div class="license-key" id="license-key-display"></div>
+                    
+                    <button class="copy-btn" onclick="copyLicense()">
+                        📋 复制激活码
+                    </button>
+
+                    <p class="info-text">
+                        请保存好您的激活码，并在 XiPack 应用中完成激活。<br>
+                        如有问题，请联系客服。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000';
+        let selectedPaymentMethod = null;
+        let currentOrderNo = null;
+        let pollInterval = null;
+
+        // 从URL参数获取设备ID
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const deviceId = urlParams.get('device_id');
+            if (deviceId) {
+                document.getElementById('device_id').value = deviceId;
+            }
+        };
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => {
+                errorEl.classList.remove('show');
+            }, 5000);
+        }
+
+        function showStep(stepNum) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(`step${stepNum}`).classList.add('active');
+        }
+
+        async function createOrder() {
+            const deviceId = document.getElementById('device_id').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!deviceId) {
+                showError('请输入设备 ID');
+                return;
+            }
+
+            if (!email) {
+                showError('请输入邮箱地址');
+                return;
+            }
+
+            if (!selectedPaymentMethod) {
+                showError('请选择支付方式');
+                return;
+            }
+
+            const btn = document.getElementById('create-order-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 创建订单中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/order/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        device_id: deviceId,
+                        payment_method: selectedPaymentMethod
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentOrderNo = data.order_no;
+                    document.getElementById('order-no').textContent = data.order_no;
+                    document.getElementById('payment-amount').textContent = data.amount;
+                    document.getElementById('payment-name').textContent = 
+                        selectedPaymentMethod === 'alipay' ? '支付宝' : '微信支付';
+
+                    // 显示二维码（实际应用中应该生成真实的二维码）
+                    const qrContainer = document.getElementById('qr-container');
+                    qrContainer.innerHTML = `
+                        <div style="padding: 20px;">
+                            <div style="font-size: 64px;">📱</div>
+                            <p style="color: #666; margin-top: 10px;">
+                                扫描二维码支付
+                            </p>
+                            <p style="color: #999; font-size: 12px; margin-top: 5px;">
+                                由于这是演示版本<br>
+                                请点击下方"模拟支付成功"按钮测试
+                            </p>
+                        </div>
+                    `;
+
+                    showStep(2);
+
+                    // 开始轮询订单状态
+                    startPolling();
+                } else {
+                    showError('创建订单失败，请重试');
+                    btn.disabled = false;
+                    btn.textContent = '立即购买';
+                }
+            } catch (error) {
+                showError('网络错误，请检查后端服务是否启动');
+                btn.disabled = false;
+                btn.textContent = '立即购买';
+            }
+        }
+
+        function startPolling() {
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/api/order/status/${currentOrderNo}`);
+                    const data = await response.json();
+
+                    if (data.status === 'paid' && data.license_key) {
+                        clearInterval(pollInterval);
+                        showSuccess(data.license_key);
+                    }
+                } catch (error) {
+                    console.error('轮询失败:', error);
+                }
+            }, 2000); // 每2秒检查一次
+        }
+
+        async function simulatePayment() {
+            try {
+                const response = await fetch(`${API_BASE}/api/payment/simulate?order_no=${currentOrderNo}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.license_key) {
+                    clearInterval(pollInterval);
+                    showSuccess(data.license_key);
+                }
+            } catch (error) {
+                showError('模拟支付失败');
+            }
+        }
+
+        function showSuccess(licenseKey) {
+            document.getElementById('license-key-display').textContent = licenseKey;
+            showStep(3);
+        }
+
+        function copyLicense() {
+            const licenseKey = document.getElementById('license-key-display').textContent;
+            navigator.clipboard.writeText(licenseKey).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ 已复制';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
